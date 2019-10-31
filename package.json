@@ -8,13 +8,7 @@
 		},
 	"private": true,
 	"scripts": {
-		"start": "node index.js",
-		"test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha \"./{,!(node_modules)/**/}*.combined.js\"",
-		"test-watch": "nodemon --exec \"npm test\"",
-		"server": "npm start",
-		"client": "npm run start --prefix client",
-		"dev": "concurrently \"npm run server\" \"npm run client\"",
-		"heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+		"start": "node index.js"		
 	},
 	"keywords": [],
 	"author": "",
