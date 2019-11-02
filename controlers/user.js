@@ -163,7 +163,7 @@ const post_login = async (req, res) => {
 
 const post_signup = async (req, res) => {
 	try {
-		const { firstname, lastname, email, password, phoneNumber } = req.body;
+		const { name, email, password } = req.body;
 
 		const existingUser = await User.findOne({
 			email
@@ -171,34 +171,13 @@ const post_signup = async (req, res) => {
 
 		if (!existingUser) {
 			const newUser = new User({
-				firstname,
-				lastname,
+				name,
 				email,
 				phoneNumber,
 				password
 			});
 
-			const activationToken = await newUser.generateToken('activation');
-
-			const emailHeader = {
-				title: 'Confirm Your Account',
-				subject: 'Confirm Your Account',
-				recipients: [ newUser ]
-			};
-
-			const emailBody = {
-				firstname,
-				lastname,
-				token: activationToken
-			};
-
-			const mailer = new Mailer(emailHeader, formatEmail(templateTypes.ACCOUNT_ACTIVATION_URL_EMAIL, emailBody));
-
-			try {
-				mailer.send();
-			} catch (error) {
-				console.log(error);
-			}
+			newUser =  await newUser.save();	
 		}
 
 		return res.status(200).json({
