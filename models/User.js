@@ -9,13 +9,7 @@ const utils = require('../utils');
 const config = require('../config');
 
 const UserSchema = new Schema({
-	firstname: {
-		type: String,
-		trim: true,
-		required: true
-	},
-
-	lastname: {
+	name: {
 		type: String,
 		trim: true,
 		required: true
@@ -33,8 +27,6 @@ const UserSchema = new Schema({
 		trim: true,
 		required: true
 	},
-
-	oldPasswords: [ String ],
 
 	phoneNumber: Number,
 
