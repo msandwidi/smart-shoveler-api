@@ -572,14 +572,10 @@ module.exports = app => {
   );
   app.post(
     `/api/v1/users/account/signup`,
-    validations.USER_SIGNUP,
-    checkValidationErrors,
     post_signup
   );
   app.get(
     `/api/v1/users/account/activate/:id`,
-    validations.USER_ACTIVATE_ACCOUNT,
-    checkValidationErrors,
     get_activate_account
   );
 
