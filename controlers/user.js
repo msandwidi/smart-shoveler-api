@@ -175,7 +175,6 @@ const post_signup = async (req, res) => {
         name,
         email,
         username: email,
-        phoneNumber,
         password
       });
 
