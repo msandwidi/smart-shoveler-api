@@ -178,7 +178,7 @@ const post_signup = async (req, res) => {
         password
       });
 
-      newUser = await newUser.save();
+      await newUser.save();
     }
 
     return res.status(200).json({
