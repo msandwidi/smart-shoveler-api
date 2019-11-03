@@ -171,7 +171,8 @@ const post_signup = async (req, res) => {
         name,
         email,
         username: email,
-        password
+        password,
+        isVerified: true //TODO: FIX ME LATER
       });
 
       await newUser.save();
