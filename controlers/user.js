@@ -2,15 +2,11 @@ const User = require("../models/User");
 
 //middlewares
 const authenticate = require("../middlewares/user_auth");
-const requireJWTHeaderToken = require("../middlewares/require_header_token");
-const checkValidationErrors = require("../middlewares/check_validation_errors");
 
 //sendgird
 const Mailer = require("../config/sendgrid");
 const templateTypes = require("../config/sendgrid/_templateTypes");
 const formatEmail = require("../config/sendgrid/_emailTemplates");
-
-const validations = require("../validations");
 
 const get_user_from_token = async (req, res) => {
   try {
@@ -580,43 +576,30 @@ module.exports = app => {
 
   app.get(
     `/api/v1/users/account/verify-reset/:id`,
-    validations.USER_VERIFY_TOKEN,
-    checkValidationErrors,
     get_verify_reset_token
   );
 
   app.post(
     `/api/v1/users/account/recovery`,
-    validations.USER_RECOVERY,
-    checkValidationErrors,
     post_account_recovery
   );
 
   app.post(
     `/api/v1/users/account/reset-account`,
-    requireJWTHeaderToken,
-    validations.USER_RESET_NEW_PWD,
-    checkValidationErrors,
     post_pwd_reset
   );
   app.post(
     `/api/v1/users/account/update-profile`,
     authenticate,
-    validations.USER_UPDATE_PROFILE,
-    checkValidationErrors,
     post_update_profile
   );
   app.post(
     `/api/v1/users/account/change-password`,
     authenticate,
-    validations.USER_RESET_NEW_PWD,
-    checkValidationErrors,
     post_change_password
   );
   app.post(
     `/api/v1/users/account/login`,
-    validations.USER_SIGNIN,
-    checkValidationErrors,
     login_fetch_account,
     post_login
   );
