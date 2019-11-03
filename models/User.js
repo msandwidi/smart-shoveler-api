@@ -86,14 +86,7 @@ UserSchema.pre('save', function(next) {
 		if (err) return next(err);
 		bcrypt.hash(user.password, salt, function(err, hash) {
 			if (err) return next(err);
-			const pwdLength = user.oldPasswords.length;
-			if (pwdLength >= 15) {
-				// save only the last 15 passwords
-				user.oldPasswords = user.oldPasswords.slice(pwdLength - 14);
-			}
-			user.oldPasswords = user.oldPasswords.concat([ hash ]);
 			user.password = hash;
-
 			return next();
 		});
 	});
