@@ -581,7 +581,7 @@ module.exports = app => {
   );
 
   app.post(
-    `/api/v1/users/account/recovery`,
+    `/api/v1/users/account/reset`,
     post_account_recovery
   );
 
