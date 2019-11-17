@@ -452,11 +452,11 @@ UserSchema.methods.clearAccessToken = function() {
 	return user.save();
 };
 
-UserSchema.statics.findByCredentials = function(email, password) {
+UserSchema.statics.findByCredentials = function(username, password) {
 	const User = this;
 
 	return User.findOne({
-		email,
+		username,
 		isClosed: false
 	}).then((user) => {
 		if (!user) {
