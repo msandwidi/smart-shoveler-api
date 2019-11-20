@@ -98,7 +98,7 @@ const get_dashboard = (req, res) => {
 const login_fetch_account = async (req, res, next) => {
   try {
     const { username, password } = req.body;
-
+    console.log(req.body);
     const user = await User.findByCredentials(username, password);
 
     if (!user) {
@@ -161,7 +161,7 @@ const post_login = async (req, res) => {
 const post_signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
+    console.log(req.body);
     const existingUser = await User.findOne({
       email
     });
@@ -195,7 +195,7 @@ const post_signup = async (req, res) => {
 const post_account_recovery = async (req, res) => {
   try {
     const email = req.body.email;
-
+    console.log(req.body);
     const user = await User.findOne({
       email,
       isVerified: true,
@@ -295,7 +295,7 @@ const get_verify_reset_token = async (req, res) => {
 const post_pwd_reset = async (req, res) => {
   try {
     const password = req.body.password;
-
+    console.log(req.body);
     const resetToken = req.token;
 
     const user = await User.findByToken("new_pwd", resetToken);
@@ -431,7 +431,7 @@ const get_activate_account = async (req, res) => {
 const post_update_profile = async (req, res) => {
   try {
     const { password, email } = req.body;
-
+    console.log(req.body);
     req.user.comparePassword(password, async (err, isMatch) => {
       if (err) {
         return res.status(500).json({
