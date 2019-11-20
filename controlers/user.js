@@ -97,9 +97,9 @@ const get_dashboard = (req, res) => {
 
 const login_fetch_account = async (req, res, next) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     console.log(req.body);
-    const user = await User.findByCredentials(username, password);
+    const user = await User.findByCredentials(email, password);
 
     if (!user) {
       return res.status(400).json({
@@ -170,7 +170,6 @@ const post_signup = async (req, res) => {
       const newUser = new User({
         name,
         email,
-        username: email,
         password,
         isVerified: true //TODO: FIX ME LATER
       });

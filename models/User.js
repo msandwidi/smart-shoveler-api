@@ -22,12 +22,6 @@ const UserSchema = new Schema({
 		required: true
 	},
 
-	username: {
-		type: String,
-		trim: true,
-		required: true
-	},
-
 	password: {
 		type: String,
 		trim: true,
@@ -452,11 +446,11 @@ UserSchema.methods.clearAccessToken = function() {
 	return user.save();
 };
 
-UserSchema.statics.findByCredentials = function(username, password) {
+UserSchema.statics.findByCredentials = function(email, password) {
 	const User = this;
 
 	return User.findOne({
-		username,
+		email,
 		isClosed: false
 	}).then((user) => {
 		if (!user) {
