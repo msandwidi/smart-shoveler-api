@@ -12,7 +12,6 @@ const UserSchema = new Schema({
 	name: {
 		type: String,
 		trim: true,
-		required: true
 	},
 
 	email: {
@@ -63,10 +62,6 @@ const UserSchema = new Schema({
 		default: false
 	},
 
-	createdBy: {
-		type: Schema.Types.ObjectId,
-		ref: 'User'
-	}
 });
 
 UserSchema.plugin(timestamps);
