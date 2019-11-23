@@ -1,6 +1,8 @@
 const WorkRequest = require("../models/WorkRequest");
 const utils = require("../utils");
 
+const authenticate = require("../middlewares/user_auth");
+
 /**
  * user post a work request
  * @param {*} req
@@ -8,6 +10,7 @@ const utils = require("../utils");
  */
 const post_add_request = async (req, res) => {
   try {
+    console.log(req.body);
     const {
       details,
       date,
@@ -16,20 +19,20 @@ const post_add_request = async (req, res) => {
       isHome,
       hasDriveway,
       hasSidewalk,
-			address,
-			price
+      address,
+      price
     } = req.body;
 
     let request = new WorkRequest({
-			price,
+      price,
       details,
       address,
       type,
       date,
       isRecurrent,
-			isHome,
-			hasDriveway,
-			hasSidewalk
+      isHome,
+      hasDriveway,
+      hasSidewalk
     });
 
     request = await request.save();
@@ -98,7 +101,7 @@ const put_update_request = async (req, res) => {
 const get_requests = async (req, res) => {
   try {
     const requests = await WorkRequest.find({ isDeleted: false });
-
+    console.log(requests)
     res.status(200).json({
       success: true,
       requests
@@ -147,8 +150,8 @@ const post_search_request = async (req, res) => {
 };
 
 module.exports = app => {
-  app.get("/api/v1/requests", get_requests);
-  app.post("/api/v1/requests", post_add_request);
-  app.put("/api/v1/requests/:id", put_update_request);
-  app.post("/api/v1/requests/search", post_search_request);
+  app.get("/api/v1/requests", authenticate, get_requests);
+  app.post("/api/v1/requests", authenticate, post_add_request);
+  app.put("/api/v1/requests/:id", authenticate, put_update_request);
+  app.post("/api/v1/requests/search", authenticate, post_search_request);
 };
