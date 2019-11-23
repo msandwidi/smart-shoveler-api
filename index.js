@@ -58,7 +58,7 @@ app.use(bodyParser.json());
 
 require('./controlers/home')(app);
 require('./controlers/user')(app);
-require('./controlers/admin')(app);
+require('./controlers/work-request')(app);
 
 if (isProdMode) {
 	app.use(express.static('client/build'));
