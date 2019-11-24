@@ -32,7 +32,8 @@ const post_add_request = async (req, res) => {
       isRecurrent,
       isHome,
       hasDriveway,
-      hasSidewalk
+      hasSidewalk,
+      user: req.user._id
     });
 
     request = await request.save();
@@ -100,8 +101,11 @@ const put_update_request = async (req, res) => {
  */
 const get_requests = async (req, res) => {
   try {
-    const requests = await WorkRequest.find({ isDeleted: false });
-    console.log(requests)
+    const requests = await WorkRequest.find({
+      isDeleted: false,
+      user: req.user._id
+    });
+    console.log(requests);
     res.status(200).json({
       success: true,
       requests
