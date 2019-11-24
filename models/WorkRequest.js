@@ -8,19 +8,13 @@ const WorkRequestSchema = new Schema({
     ref: "User"
 	},
 	
-  type: {
+  jobType: {
     type: String,
     trim: true,
 		required: true,
 		default: 'snow'
 	},
 
-	address: {
-    type: String,
-    trim: true,
-		required: true,
-	},
-	
 	price: {
     type: String,
     trim: true,
