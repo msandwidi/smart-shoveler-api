@@ -41,11 +41,11 @@ utils.generateRandomToken = (type, length = 7) => {
 
 utils.parseAddress = (address) => {
 	//'1005 N Gravenstein Highway Sebastopol CA 95472'
-	return parseAddress.parseLocation(address);
+	return addressParser.parseAddress(address);
 };
 
-utils.normalizeAddress = (address) => {
-	return parseAddress.normalizeAddress(address);
+utils.parseInformalAddress = (address) => {
+	return addressParser.parseInformalAddress(address);
 };
 
 module.exports = utils;

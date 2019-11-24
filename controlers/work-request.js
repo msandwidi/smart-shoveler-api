@@ -13,7 +13,7 @@ const post_add_request = async (req, res) => {
 		console.log(req.body);
 		const { details, date, type, isRecurrent, isHome, hasDriveway, hasSidewalk, address, price } = req.body;
 
-		const parsedAddress = utils.parseAddress(address);
+		const parsedAddress = utils.parseInformalAddress(address);
 
 		if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
 			return res.status(400).json({
