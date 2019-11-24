@@ -20,6 +20,10 @@ const ProviderProfileSchema = new Schema({
     ref: "Location"
   },
 
+  imageUrl: String,
+
+  rating: Number,
+
   info: {
     type: String,
     trim: true
@@ -33,9 +37,6 @@ const ProviderProfileSchema = new Schema({
   isDeleted: {
     type: Boolean,
     default: false
-  },
-  rating: {
-    type: Number
   }
 });
 

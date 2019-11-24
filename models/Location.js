@@ -28,10 +28,11 @@ const LocationSchema = new Schema({
     trim: true
   },
 
-  zipCode: {
-    type: String,
-    trim: true
-  },
+  zipCode: Number,
+
+  latitude: Number,
+
+  longitude: Number,
 
   isDeleted: {
     type: Boolean,
