@@ -3,9 +3,38 @@ const Location = require("../models/Location");
 
 const authenticate = require("../middlewares/user_auth");
 
+const getProfile = require("../middlewares/user_profile");
+
 const post_providers_pool = async (req, res) => {
 	try {
 		const { zipCode } = req.body;
+
+		const profiles = await ProviderProfile.find({ isPublic: true, isDeleted: false, zipCode });
+
+		res.status(200).json({
+			success: true,
+			profiles
+		});
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).json({
+			success: false,
+			message: "An error occured"
+		});
+	}
+};
+
+const get_providers_in_my_area = async (req, res) => {
+	try {
+		const profile = req.userProfile;
+
+		if (!profile || !profile.zipCode) {
+			res.status(200).json({
+				success: true,
+				profiles: []
+			});
+		}
 
 		const profiles = await ProviderProfile.find({ isPublic: true, isDeleted: false, zipCode });
 
@@ -91,5 +120,6 @@ const get_view_profile = async (req, res) => {
 module.exports = (app) => {
 	app.post("/api/v1/providers/pool", post_providers_pool);
 	app.post("/api/v1/providers/pool/:id", get_view_profile);
+	app.get("/api/v1/providers/nearby", authenticate, getProfile, get_providers_in_my_area);
 	app.post("/api/v1/providers/my/setup", authenticate, post_set_my_provider_profile);
 };
