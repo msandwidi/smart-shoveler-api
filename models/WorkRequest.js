@@ -55,19 +55,16 @@ const WorkRequestSchema = new Schema({
   addressStreet: {
     type: String,
     trim: true,
-    required: true
   },
 
   addressCity: {
     type: String,
     trim: true,
-    required: true
   },
   
   addressState: {
     type: String,
     trim: true,
-    required: true
   },
 
   addressZip: {
