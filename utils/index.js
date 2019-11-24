@@ -1,7 +1,8 @@
-const jwt = require('jsonwebtoken');
-const { uid } = require('rand-token');
+const addressParser = require("parse-address");
+const jwt = require("jsonwebtoken");
+const { uid } = require("rand-token");
 
-const config = require('../config');
+const config = require("../config");
 
 let utils = {};
 
@@ -32,10 +33,19 @@ utils.verifyToken = (token) => {
 };
 
 utils.generateRandomToken = (type, length = 7) => {
-	if (type === 'number') {
+	if (type === "number") {
 		return generateRandomNumber(length);
 	}
 	return uid(length);
+};
+
+utils.parseAddress = (address) => {
+	//'1005 N Gravenstein Highway Sebastopol CA 95472'
+	return parseAddress.parseLocation(address);
+};
+
+utils.normalizeAddress = (address) => {
+	return parseAddress.normalizeAddress(address);
 };
 
 module.exports = utils;

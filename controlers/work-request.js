@@ -13,6 +13,17 @@ const post_add_request = async (req, res) => {
 		console.log(req.body);
 		const { details, date, type, isRecurrent, isHome, hasDriveway, hasSidewalk, address, price } = req.body;
 
+		const parsedAddress = utils.parseAddress(address);
+
+		if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
+			return res.status(400).json({
+				success: false,
+				message: "The address provided is not valid"
+			});
+		}
+
+    var { street: addressStreet, city: addressCity, state: addressState, zip: addressZip } = parsedAddress;
+    
 		let request = new WorkRequest({
 			price,
 			details,
@@ -23,7 +34,11 @@ const post_add_request = async (req, res) => {
 			isHome,
 			hasDriveway,
 			hasSidewalk,
-			user: req.user._id
+			user: req.user._id,
+			addressStreet,
+			addressCity,
+			addressState,
+			addressZip
 		});
 
 		request = await request.save();
@@ -111,12 +126,12 @@ const get_my_requests = async (req, res) => {
 
 const post_requests_pool = async (req, res) => {
 	try {
-    const { zipCode } = req.body;
-    
+		const { zipCode } = req.body;
+
 		const requests = await WorkRequest.find({
 			isDeleted: false
-    });
-    
+		});
+
 		res.status(200).json({
 			success: true,
 			requests

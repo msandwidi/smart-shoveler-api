@@ -52,6 +52,36 @@ const WorkRequestSchema = new Schema({
     default: Date.now()
   },
 
+  address: {
+    type: String,
+    trim: true,
+    required: true
+  },
+
+  addressStreet: {
+    type: String,
+    trim: true,
+    required: true
+  },
+
+  addressCity: {
+    type: String,
+    trim: true,
+    required: true
+  },
+  
+  addressState: {
+    type: String,
+    trim: true,
+    required: true
+  },
+
+  addressZip: {
+    type: String,
+    trim: true,
+    required: true
+  },
+
   isFulFilled: {
     type: Boolean,
     default: false
