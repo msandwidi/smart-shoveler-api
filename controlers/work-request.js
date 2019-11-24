@@ -22,8 +22,10 @@ const post_add_request = async (req, res) => {
 			});
 		}
 
-    var { street: addressStreet, city: addressCity, state: addressState, zip: addressZip } = parsedAddress;
-    
+		console.log("parsed address = ", parsedAddress);
+
+		var { street: addressStreet, city: addressCity, state: addressState, zip: addressZip } = parsedAddress;
+
 		let request = new WorkRequest({
 			price,
 			details,
@@ -42,6 +44,8 @@ const post_add_request = async (req, res) => {
 		});
 
 		request = await request.save();
+
+		console.log("saved request = ", request);
 
 		res.status(200).json({
 			success: true,
