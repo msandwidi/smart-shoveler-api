@@ -13,7 +13,9 @@ const post_add_request = async (req, res) => {
 		console.log(req.body);
 		const { details, date, type, isRecurrent, isHome, hasDriveway, hasSidewalk, address, price } = req.body;
 
-		const parsedAddress = utils.parseInformalAddress(address);
+    const parsedAddress = utils.parseInformalAddress(address);
+    
+    console.log("parsed address = ", parsedAddress);
 
 		if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
 			return res.status(400).json({
@@ -21,8 +23,6 @@ const post_add_request = async (req, res) => {
 				message: "The address provided is not valid"
 			});
 		}
-
-		console.log("parsed address = ", parsedAddress);
 
 		var { street: addressStreet, city: addressCity, state: addressState, zip: addressZip } = parsedAddress;
 
