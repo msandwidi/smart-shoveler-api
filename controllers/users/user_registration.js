@@ -96,9 +96,9 @@ const get_activate_account = async (req, res) => {
 };
 
 module.exports = (app) => {
-	app.post(`/api/v1/users/signup`, validations.USER_SIGNUP, checkValidationErrors, post_signup);
+	app.post(`/api/v1/users/account/signup`, validations.USER_SIGNUP, checkValidationErrors, post_signup);
 	app.get(
-		`/api/v1/users/signup/activate/:id`,
+		`/api/v1/users/account/signup/activate/:id`,
 		validations.USER_ACTIVATE_ACCOUNT,
 		checkValidationErrors,
 		get_activate_account

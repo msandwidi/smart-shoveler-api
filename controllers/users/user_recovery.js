@@ -128,21 +128,21 @@ const put_new_password = async (req, res) => {
 
 module.exports = app => {
   app.get(
-    `/api/v1/users/recovery/:id`,
+    `/api/v1/users/account/recovery/:id`,
     validations.USER_VERIFY_TOKEN,
     checkValidationErrors,
     get_verify_reset_token
   );
 
   app.post(
-    `/api/v1/users/recovery`,
+    `/api/v1/users/account/recovery`,
     validations.USER_RECOVERY,
     checkValidationErrors,
     post_account_recovery
   );
 
   app.put(
-    `/api/v1/users/recovery`,
+    `/api/v1/users/account/recovery`,
     requireJWTHeaderToken,
     validations.USER_RESET_NEW_PWD,
     checkValidationErrors,

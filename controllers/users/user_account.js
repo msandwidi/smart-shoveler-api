@@ -259,29 +259,29 @@ const put_change_password = async (req, res) => {
 };
 
 module.exports = app => {
-  app.get(`/api/v1/users/auth`, authenticate, get_user_from_token);
-  app.get(`/api/v1/users/profile`, authenticate, get_my_profile);
+  app.get(`/api/v1/users/account/auth`, authenticate, get_user_from_token);
+  app.get(`/api/v1/users/account/profile`, authenticate, get_my_profile);
 
   app.put(
-    `/api/v1/users/profile`,
+    `/api/v1/users/account/profile`,
     authenticate,
     validations.USER_UPDATE_PROFILE,
     checkValidationErrors,
     put_update_profile
   );
   app.put(
-    `/api/v1/users/password`,
+    `/api/v1/users/account/password`,
     authenticate,
     validations.USER_RESET_NEW_PWD,
     checkValidationErrors,
     put_change_password
   );
   app.post(
-    `/api/v1/users/login`,
+    `/api/v1/users/account/login`,
     validations.USER_SIGNIN,
     checkValidationErrors,
     login_fetch_account,
     post_login
   );
-  app.post(`/api/v1/users/logout`, authenticate, delete_token);
+  app.post(`/api/v1/users/account/logout`, authenticate, delete_token);
 };
