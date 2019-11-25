@@ -1,17 +1,27 @@
-const mongoose = require('mongoose');
-const timestamps = require('mongoose-timestamp');
+const mongoose = require("mongoose");
+const timestamps = require("mongoose-timestamp");
 const Schema = mongoose.Schema;
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const pick = require('lodash/pick');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const pick = require("lodash/pick");
 
-const utils = require('../utils');
-const config = require('../config');
+const utils = require("../utils");
+const config = require("../config");
 
 const UserSchema = new Schema({
 	name: {
 		type: String,
-		trim: true,
+		trim: true
+	},
+
+	nickname: {
+		type: String,
+		trim: true
+	},
+
+	description: {
+		type: String,
+		trim: true
 	},
 
 	email: {
@@ -25,6 +35,36 @@ const UserSchema = new Schema({
 		type: String,
 		trim: true,
 		required: true
+	},
+
+	address: {
+		type: String,
+		trim: true
+	},
+
+	street: {
+		type: String,
+		trim: true
+	},
+
+	city: {
+		type: String,
+		trim: true
+	},
+
+	zipCode: {
+		type: Number
+	},
+
+	state: {
+		type: String,
+		trim: true
+	},
+
+	imageUrl: {
+		type: String,
+		trim: true,
+		default: "https://res.cloudinary.com/smimages/image/upload/c_scale,h_40/v1574617110/defaultprofile_md.png"
 	},
 
 	phoneNumber: Number,
@@ -62,14 +102,25 @@ const UserSchema = new Schema({
 		default: false
 	},
 
+	isProvider: {
+		type: Boolean,
+		default: false
+	},
+
+	isPublic: {
+		type: Boolean,
+		default: false
+	},
+
+	rating: Number
 });
 
 UserSchema.plugin(timestamps);
 
-UserSchema.pre('save', function(next) {
+UserSchema.pre("save", function(next) {
 	let user = this;
 
-	if (!user.isModified('password')) return next();
+	if (!user.isModified("password")) return next();
 
 	bcrypt.genSalt(10, function(err, salt) {
 		if (err) return next(err);
@@ -89,16 +140,16 @@ UserSchema.methods.toJSON = function() {
 	const userObject = this.toObject();
 
 	return pick(userObject, [
-		'_id',
-		'email',
-		'firstname',
-		'middlename',
-		'lastname',
-		'phoneNumber',
-		'isAdmin',
-		'isVerified',
-		'isActivated',
-		'isClosed'
+		"_id",
+		"email",
+		"firstname",
+		"middlename",
+		"lastname",
+		"phoneNumber",
+		"isAdmin",
+		"isVerified",
+		"isActivated",
+		"isClosed"
 	]);
 };
 
@@ -106,15 +157,15 @@ UserSchema.methods.toFullProfile = function() {
 	const userObject = this.toObject();
 
 	return pick(userObject, [
-		'_id',
-		'email',
-		'firstname',
-		'lastname',
-		'phoneNumber',
-		'isAdmin',
-		'isVerified',
-		'isBlocked',
-		'isClosed'
+		"_id",
+		"email",
+		"firstname",
+		"lastname",
+		"phoneNumber",
+		"isAdmin",
+		"isVerified",
+		"isBlocked",
+		"isClosed"
 	]);
 };
 
@@ -122,36 +173,36 @@ UserSchema.methods.toAuthProfile = function() {
 	const userObject = this.toObject();
 
 	return pick(userObject, [
-		'_id',
-		'email',
-		'firstname',
-		'lastname',
-		'phoneNumber',
-		'isAdmin',
-		'isVerified',
-		'isBlocked',
-		'isClosed'
+		"_id",
+		"email",
+		"firstname",
+		"lastname",
+		"phoneNumber",
+		"isAdmin",
+		"isVerified",
+		"isBlocked",
+		"isClosed"
 	]);
 };
 
 UserSchema.methods.toPublicProfile = function() {
 	const userObject = this.toObject();
 
-	return pick(userObject, [ 'firstname', 'lastname' ]);
+	return pick(userObject, [ "firstname", "lastname" ]);
 };
 
 UserSchema.methods.toMyProfile = function() {
 	const userObject = this.toObject();
 
 	return pick(userObject, [
-		'email',
-		'firstname',
-		'lastname',
-		'phoneNumber',
-		'isAdmin',
-		'isVerified',
-		'isBlocked',
-		'isClosed'
+		"email",
+		"firstname",
+		"lastname",
+		"phoneNumber",
+		"isAdmin",
+		"isVerified",
+		"isBlocked",
+		"isClosed"
 	]);
 };
 
@@ -248,7 +299,7 @@ UserSchema.methods.generateToken = function(access) {
 	let user = this;
 
 	switch (access) {
-		case 'auth':
+		case "auth":
 			const authToken = jwt
 				.sign(
 					{
@@ -287,7 +338,7 @@ UserSchema.methods.generateToken = function(access) {
 					return Promise.resolve();
 				});
 
-		case 'reset':
+		case "reset":
 			const resetToken = utils.generateRandomToken(null, 32);
 			user.tokens = [];
 			user.tokens = user.tokens.concat([
@@ -308,7 +359,7 @@ UserSchema.methods.generateToken = function(access) {
 					return Promise.resolve();
 				});
 
-		case 'new_pwd':
+		case "new_pwd":
 			const newPwdToken = jwt
 				.sign(
 					{
@@ -342,7 +393,7 @@ UserSchema.methods.generateToken = function(access) {
 					console.log(e);
 					return Promise.resolve();
 				});
-		case 'activation':
+		case "activation":
 			const activationToken = utils.generateRandomToken(null, 32);
 			user.tokens = [];
 
@@ -375,43 +426,43 @@ UserSchema.statics.findByToken = function(access, token) {
 
 	let decoded;
 	switch (access) {
-		case 'auth':
+		case "auth":
 			decoded = utils.verifyToken(token);
 			if (!decoded) return Promise.resolve();
 
 			return User.findOne({
 				_id: decoded._id,
-				'tokens.token': token,
-				'tokens.access': access,
+				"tokens.token": token,
+				"tokens.access": access,
 				isVerified: true,
 				isBlocked: false,
 				isClosed: false
 			});
 
-		case 'reset':
+		case "reset":
 			return User.findOne({
-				'tokens.token': token,
-				'tokens.access': access,
+				"tokens.token": token,
+				"tokens.access": access,
 				isVerified: true,
 				isClosed: false
 			});
 
-		case 'activation':
+		case "activation":
 			return User.findOne({
-				'tokens.token': token,
-				'tokens.access': access,
+				"tokens.token": token,
+				"tokens.access": access,
 				isClosed: false,
 				isVerified: false
 			});
 
-		case 'new_pwd':
+		case "new_pwd":
 			decoded = utils.verifyToken(token);
 			if (!decoded) return Promise.resolve();
 
 			return User.findOne({
 				_id: decoded._id,
-				'tokens.token': token,
-				'tokens.access': access,
+				"tokens.token": token,
+				"tokens.access": access,
 				isVerified: true,
 				isBlocked: true,
 				isClosed: false
@@ -463,7 +514,7 @@ UserSchema.statics.findByCredentials = function(email, password) {
 
 UserSchema.statics.fetchAccounts = function() {
 	const Accounts = this;
-	return Accounts.find().select('-password -oldPasswords -tokens -_v');
+	return Accounts.find().select("-password -oldPasswords -tokens -_v");
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);
