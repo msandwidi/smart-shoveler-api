@@ -1,12 +1,12 @@
-const ProviderProfile = require("../models/ProviderProfile");
 const User = require("../models/User");
-const Location = require("../models/Location");
 
 const authenticate = require("../middlewares/user_auth");
 
 const post_providers_pool = async (req, res) => {
 	try {
 		const { zipCode } = req.body;
+
+		console.log(req.body);
 
 		const profiles = await User.find({ isPublic: true, isDeleted: false, zipCode });
 
@@ -26,6 +26,9 @@ const post_providers_pool = async (req, res) => {
 
 const put_toggle_profile_status = async (req, res) => {
 	try {
+		console.log("param=", req.params.id);
+		console.log("body =", req.body);
+
 		const profile = await User.findOne({ _id: req.user._id, isProvider: true });
 
 		if (!profile) {
@@ -40,7 +43,7 @@ const put_toggle_profile_status = async (req, res) => {
 
 		res.status(200).json({
 			success: true,
-			profile
+			profile: profile.toAuthProfile()
 		});
 	} catch (error) {
 		console.log(error);
@@ -54,7 +57,9 @@ const put_toggle_profile_status = async (req, res) => {
 
 const get_providers_in_my_area = async (req, res) => {
 	try {
-		const profiles = await ProviderProfile.find({ isPublic: true, isDeleted: false, zipCode: req.user.zipCode });
+		const profiles = await User.find({ isPublic: true, isDeleted: false, zipCode: req.user.zipCode });
+
+		console.log(profiles);
 
 		res.status(200).json({
 			success: true,
@@ -80,6 +85,8 @@ const post_set_my_provider_profile = async (req, res) => {
 
 		const { nickname, street, city, state, zipCode, description } = req.body;
 
+		console.log(req.body);
+
 		let profile = await User.findOne({
 			_id: req.user._id
 		});
@@ -95,7 +102,7 @@ const post_set_my_provider_profile = async (req, res) => {
 
 		res.status(200).json({
 			success: true,
-			profile
+			profile: profile.toAuthProfile()
 		});
 	} catch (error) {
 		console.log(error);
@@ -111,7 +118,7 @@ const get_view_profile = async (req, res) => {
 	try {
 		const id = req.params.id;
 
-		const profile = await ProviderProfile.findOne({
+		const profile = await User.findOne({
 			_id: id,
 			isDeleted: false,
 			isPublic: true
@@ -123,9 +130,11 @@ const get_view_profile = async (req, res) => {
 				message: "The selected profile cannot be found"
 			});
 
+		console.log(profile);
+
 		res.status(200).json({
 			success: true,
-			profile
+			profile: profile.toPublicProfile()
 		});
 	} catch (error) {
 		console.log(error);

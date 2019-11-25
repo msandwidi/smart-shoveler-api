@@ -56,9 +56,9 @@ app.use(
 );
 app.use(bodyParser.json());
 
-require('./controlers/home')(app);
-require('./controlers/user')(app);
-require('./controlers/work-request')(app);
+require('./controllers/home')(app);
+require('./controllers/users')(app);
+require('./controllers/work-request')(app);
 
 if (isProdMode) {
 	app.use(express.static('client/build'));
