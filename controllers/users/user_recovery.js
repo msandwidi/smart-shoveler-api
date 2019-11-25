@@ -2,13 +2,11 @@ const User = require("../../models/User");
 
 //middlewares
 const requireJWTHeaderToken = require("../../middlewares/user_auth");
-const checkValidationErrors = require("../../middlewares/check_validation_errors");
 
 const emailService = require("../../services/email");
 
 const emailTypes = require("../../services/email/emailTypes");
 
-const validations = require("../../validations");
 
 /**
  * start recovery
@@ -129,23 +127,16 @@ const put_new_password = async (req, res) => {
 module.exports = app => {
   app.get(
     `/api/v1/users/account/recovery/:id`,
-    validations.USER_VERIFY_TOKEN,
-    checkValidationErrors,
     get_verify_reset_token
   );
 
   app.post(
     `/api/v1/users/account/recovery`,
-    validations.USER_RECOVERY,
-    checkValidationErrors,
     post_account_recovery
   );
 
   app.put(
     `/api/v1/users/account/recovery`,
-    requireJWTHeaderToken,
-    validations.USER_RESET_NEW_PWD,
-    checkValidationErrors,
     put_new_password
   );
 };

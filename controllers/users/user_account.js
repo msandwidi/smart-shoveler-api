@@ -263,18 +263,15 @@ module.exports = app => {
   app.put(
     `/api/v1/users/account/profile`,
     authenticate,
-    checkValidationErrors,
     put_update_profile
   );
   app.put(
     `/api/v1/users/account/password`,
     authenticate,
-    checkValidationErrors,
     put_change_password
   );
   app.post(
     `/api/v1/users/account/login`,
-    checkValidationErrors,
     login_fetch_account,
     post_login
   );

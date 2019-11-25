@@ -1,11 +1,9 @@
 const User = require("../../models/User");
 
 //middlewares
-const checkValidationErrors = require("../../middlewares/check_validation_errors");
 
 const emailService = require("../../services/email");
 const emailTypes = require("../../services/email/emailTypes");
-const validations = require("../../validations");
 
 /**
  * signup
@@ -96,11 +94,9 @@ const get_activate_account = async (req, res) => {
 };
 
 module.exports = (app) => {
-	app.post(`/api/v1/users/account/signup`, validations.USER_SIGNUP, checkValidationErrors, post_signup);
+	app.post(`/api/v1/users/account/signup`,   post_signup);
 	app.get(
 		`/api/v1/users/account/signup/activate/:id`,
-		validations.USER_ACTIVATE_ACCOUNT,
-		checkValidationErrors,
 		get_activate_account
 	);
 };
