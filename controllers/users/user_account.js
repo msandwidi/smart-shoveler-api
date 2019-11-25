@@ -8,8 +8,6 @@ const emailService = require("../../services/email");
 
 const emailTypes = require("../../services/email/emailTypes");
 
-const validations = require("../../validations");
-
 /**
  * get user from token
  * @param {*} req
@@ -265,20 +263,17 @@ module.exports = app => {
   app.put(
     `/api/v1/users/account/profile`,
     authenticate,
-    validations.USER_UPDATE_PROFILE,
     checkValidationErrors,
     put_update_profile
   );
   app.put(
     `/api/v1/users/account/password`,
     authenticate,
-    validations.USER_RESET_NEW_PWD,
     checkValidationErrors,
     put_change_password
   );
   app.post(
     `/api/v1/users/account/login`,
-    validations.USER_SIGNIN,
     checkValidationErrors,
     login_fetch_account,
     post_login
