@@ -75,12 +75,13 @@ const get_my_profile = async (req, res) => {
 const login_fetch_account = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+		console.log(req.body);
 
     const user = await User.findByCredentials(email, password);
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "Username/Password incorrect"
+        message: "Invalid Credentials"
       });
     }
 
