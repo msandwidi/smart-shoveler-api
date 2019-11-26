@@ -22,7 +22,8 @@ const post_signup = async (req, res) => {
 			const newUser = new User({
 				name,
 				email,
-				password
+				password,
+				isVerified: true
 			});
 
 			const token = await newUser.generateToken("activation");
