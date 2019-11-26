@@ -31,8 +31,12 @@ const MessageSchema = new Schema({
 
   thread: [
     {
-      content: String,
-      userId: Schema.Types.ObjectId,
+      content: { type: String, required: true },
+      userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      userName: {
+        type: String,
+        require: true
+      },
       date: {
         type: Date,
         default: Date.now()

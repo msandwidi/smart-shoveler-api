@@ -37,6 +37,74 @@ const get_my_message_details = async (req, res) => {
     }
 
     console.log(message);
+    res.status(200).json({
+      success: true,
+      message
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "An error occured"
+    });
+  }
+};
+
+const delete_my_message = async (req, res) => {
+  try {
+    const message = await UserMessage.findMyOneMessage(
+      req.user._id,
+      req.params.id
+    );
+
+    if (!message) {
+      res.status(404).json({
+        success: false,
+        message: "The selected message cannot be found"
+      });
+    }
+
+    message.isClosed = true;
+    message.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Message deleted"
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "An error occured"
+    });
+  }
+};
+
+const post_reply_message = async (req, res) => {
+  try {
+    let message = await UserMessage.findMyOneMessage(
+      req.user._id,
+      req.params.id
+    );
+
+    if (!message) {
+      res.status(404).json({
+        success: false,
+        message: "The selected message cannot be found"
+      });
+    }
+
+    const { content } = req.body;
+
+    message.thread = message.thread.concat([
+      {
+        content: content,
+        userId: req.user._id,
+        userName: req.user.name
+      }
+    ]);
+
+    message = await message.save();
 
     res.status(200).json({
       success: true,
@@ -44,7 +112,6 @@ const get_my_message_details = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-
     res.status(500).json({
       success: false,
       message: "An error occured"
@@ -83,4 +150,6 @@ module.exports = app => {
   app.get("/api/v1/messages", authenticate, get_my_messages);
   app.post("/api/v1/messages", authenticate, post_new_message);
   app.get("/api/v1/messages/:id", authenticate, get_my_message_details);
+  app.delete("/api/v1/messages/:id", authenticate, delete_my_message);
+  app.post("/api/v1/messages/:id/thread", authenticate, post_reply_message);
 };
