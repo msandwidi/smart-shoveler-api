@@ -4,6 +4,8 @@ const authenticate = require("../middlewares/user_auth");
 
 const get_my_messages = async (req, res) => {
   const messages = await UserMessage.findMyMessages(req.user._id);
+  
+  console.log(messages)
 
   res.status(200).json({
     success: true,
@@ -19,6 +21,8 @@ const post_new_message = async (req, res) => {
     senderId: user,
     content
   });
+
+  message = await message.save()
 
   res.status(200).json({
     success: true,
