@@ -1,14 +1,14 @@
-const express = require('express');
-const chalk = require('chalk');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
+const express = require("express");
+const chalk = require("chalk");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
 //const cors = require('cors');
-const path = require('path');
+const path = require("path");
 
-const config = require('./config'); // configuration keys
+const config = require("./config"); // configuration keys
 
-const isProdMode = process.env.NODE_ENV === 'production';
+const isProdMode = process.env.NODE_ENV === "production";
 
 const app = express();
 /*
@@ -26,48 +26,52 @@ const corsOptions = {
 app.use(cors(corsOptions)); // unable cors
 */
 if (isProdMode) {
-	app.disable('x-powered-by'); // dieable x-powered-by express
-	app.use(morgan('common'));
+  app.disable("x-powered-by"); // dieable x-powered-by express
+  app.use(morgan("common"));
 } else {
-	app.use(morgan('dev'));
+  app.use(morgan("dev"));
 }
 
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
-mongoose.set('useCreateIndex', true);
+mongoose.set("useCreateIndex", true);
 mongoose.Promise = global.Promise;
 mongoose
-	.connect(config.MONGO_URI, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true
-	})
-	.then(() => {
-		console.log(chalk.green('✓-- ') + 'MongoDB ' + chalk.green('Connected'));
-	})
-	.catch((err) => {
-		console.log(chalk.red('✗-- ') + 'Database Connection Error: ' + err.toString());
-		process.exit(1);
-	});
+  .connect(config.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    console.log(chalk.green("✓-- ") + "MongoDB " + chalk.green("Connected"));
+  })
+  .catch(err => {
+    console.log(
+      chalk.red("✗-- ") + "Database Connection Error: " + err.toString()
+    );
+    process.exit(1);
+  });
 
 app.use(
-	bodyParser.urlencoded({
-		extended: false
-	})
+  bodyParser.urlencoded({
+    extended: false
+  })
 );
 app.use(bodyParser.json());
 
-require('./controllers/home')(app);
-require('./controllers/users')(app);
-require('./controllers/work-request')(app);
+require("./controllers/home")(app);
+require("./controllers/users")(app);
+require("./controllers/work-request")(app);
+require("./controllers/message")(app);
 
-if (isProdMode) {
-	app.use(express.static('client/build'));
+app.all("*", (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "The requested link resource cannot be found"
+  });
+});
 
-	app.get('*', (req, res) => {
-		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-	});
-}
-
-app.listen(config.PORT, () => console.log(chalk.green('✓-- ') + `App is running at port: ${config.PORT}`));
+app.listen(config.PORT, () =>
+  console.log(chalk.green("✓-- ") + `App is running at port: ${config.PORT}`)
+);
 
 module.exports = app;
