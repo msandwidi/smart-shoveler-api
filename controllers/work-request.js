@@ -64,6 +64,63 @@ const post_add_request = async (req, res) => {
 	}
 };
 
+const post_add_no_auth_request = async (req, res) => {
+	try {
+		console.log(req.body);
+		const { details, date, type, isRecurrent, isHome, hasDriveway, hasSidewalk, address, price } = req.body;
+
+		const parsedAddress = utils.parseAddress(address);
+
+		if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
+			parsedAddress = utils.parseInformalAddress(address);
+    }
+    
+    console.log("parsed address = ", parsedAddress);
+
+		if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
+			return res.status(400).json({
+				success: false,
+				message: "The address provided is not valid"
+			});
+		}
+
+		var { street: addressStreet, city: addressCity, state: addressState, zip: addressZip } = parsedAddress;
+
+		let request = new WorkRequest({
+			price,
+			details,
+			address,
+			type,
+			date,
+			isRecurrent,
+			isHome,
+			hasDriveway,
+			hasSidewalk,
+			addressStreet,
+			addressCity,
+			addressState,
+			addressZip,
+			isNoAuth: true
+		});
+
+		request = await request.save();
+
+		console.log("saved request = ", request);
+
+		res.status(200).json({
+			success: true,
+			request
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({
+			success: false,
+			message: "An unknown error occured"
+		});
+	}
+};
+
+
 /**
  * find and update an request
  * @param {*} req
@@ -193,4 +250,7 @@ module.exports = (app) => {
 	app.post("/api/v1/requests", authenticate, post_add_request);
 	app.put("/api/v1/requests/:id", authenticate, put_update_request);
 	app.post("/api/v1/requests/search", authenticate, post_search_request);
+
+	// no auth required enpoints
+	app.post("/api/v1/common/requests",  post_add_no_auth_request);
 };

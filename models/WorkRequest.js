@@ -6,16 +6,16 @@ const WorkRequestSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User"
-	},
-	
+  },
+
   jobType: {
     type: String,
     trim: true,
-		required: true,
-		default: 'snow'
-	},
+    required: true,
+    default: "snow"
+  },
 
-	price: {
+  price: {
     type: String,
     trim: true,
     required: true
@@ -54,17 +54,17 @@ const WorkRequestSchema = new Schema({
 
   addressStreet: {
     type: String,
-    trim: true,
+    trim: true
   },
 
   addressCity: {
     type: String,
-    trim: true,
+    trim: true
   },
-  
+
   addressState: {
     type: String,
-    trim: true,
+    trim: true
   },
 
   addressZip: {
@@ -76,14 +76,18 @@ const WorkRequestSchema = new Schema({
   isFulFilled: {
     type: Boolean,
     default: false
-	},
-	
+  },
+
   isCancel: {
     type: Boolean,
     default: false
-	},
-	
+  },
+
   isDeleted: {
+    type: Boolean,
+    default: false
+  },
+  isNoAuth: {
     type: Boolean,
     default: false
   }
