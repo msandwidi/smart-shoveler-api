@@ -59,6 +59,7 @@ const post_new_message = async (req, res) => {
     let message = UserMessage({
       recipientId,
       senderId: user,
+      senderName: req.user.name,
       content
     });
 

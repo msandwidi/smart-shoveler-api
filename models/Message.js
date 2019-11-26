@@ -19,6 +19,11 @@ const MessageSchema = new Schema({
     required: true
   },
 
+  senderName: {
+    type: String,
+    required: true
+  },
+
   senderId: {
     type: Schema.Types.ObjectId,
     ref: "User"
