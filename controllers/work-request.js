@@ -9,117 +9,148 @@ const authenticate = require("../middlewares/user_auth");
  * @param {*} res
  */
 const post_add_request = async (req, res) => {
-	try {
-		console.log(req.body);
-		const { details, date, type, isRecurrent, isHome, hasDriveway, hasSidewalk, address, price } = req.body;
+  try {
+    console.log(req.body);
+    const {
+      details,
+      date,
+      type,
+      isRecurrent,
+      isHome,
+      hasDriveway,
+      hasSidewalk,
+      address,
+      price
+    } = req.body;
 
-		const parsedAddress = utils.parseAddress(address);
+    const parsedAddress = utils.parseAddress(address);
 
-		if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
-			parsedAddress = utils.parseInformalAddress(address);
+    if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
+      parsedAddress = utils.parseInformalAddress(address);
     }
-    
+
     console.log("parsed address = ", parsedAddress);
 
-		if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
-			return res.status(400).json({
-				success: false,
-				message: "The address provided is not valid"
-			});
-		}
+    if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "The address provided is not valid"
+      });
+    }
 
-		var { street: addressStreet, city: addressCity, state: addressState, zip: addressZip } = parsedAddress;
+    var {
+      street: addressStreet,
+      city: addressCity,
+      state: addressState,
+      zip: addressZip
+    } = parsedAddress;
 
-		let request = new WorkRequest({
-			price,
-			details,
-			address,
-			type,
-			date,
-			isRecurrent,
-			isHome,
-			hasDriveway,
-			hasSidewalk,
-			user: req.user._id,
-			addressStreet,
-			addressCity,
-			addressState,
-			addressZip
-		});
+    let request = new WorkRequest({
+      price,
+      details,
+      address,
+      type,
+      date,
+      isRecurrent,
+      isHome,
+      hasDriveway,
+      hasSidewalk,
+      user: req.user._id,
+      addressStreet,
+      addressCity,
+      addressState,
+      addressZip
+    });
 
-		request = await request.save();
+    request = await request.save();
 
-		console.log("saved request = ", request);
+    console.log("saved request = ", request);
 
-		res.status(200).json({
-			success: true,
-			request
-		});
-	} catch (error) {
-		console.log(error);
-		res.status(500).json({
-			success: false,
-			message: "An unknown error occured"
-		});
-	}
+    res.status(200).json({
+      success: true,
+      request
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "An unknown error occured"
+    });
+  }
 };
 
 const post_add_no_auth_request = async (req, res) => {
-	try {
-		console.log(req.body);
-		const { details, date, type, isRecurrent, isHome, hasDriveway, hasSidewalk, address, price } = req.body;
+  try {
+    console.log(req.body);
+    const {
+      details,
+      date,
+      type,
+      isRecurrent,
+      isHome,
+      hasDriveway,
+      hasSidewalk,
+      address,
+      price
+    } = req.body;
 
-		const parsedAddress = utils.parseAddress(address);
+    const parsedAddress = utils.parseAddress(address);
 
-		if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
-			parsedAddress = utils.parseInformalAddress(address);
+    if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
+      parsedAddress = utils.parseInformalAddress(address);
     }
-    
+
     console.log("parsed address = ", parsedAddress);
 
-		if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
-			return res.status(400).json({
-				success: false,
-				message: "The address provided is not valid"
-			});
-		}
+    if (!parsedAddress.zip || parsedAddress.zip.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "The address provided is not valid"
+      });
+    }
 
-		var { street: addressStreet, city: addressCity, state: addressState, zip: addressZip } = parsedAddress;
+    var {
+      street: addressStreet,
+      city: addressCity,
+      state: addressState,
+      zip: addressZip,
+      phoneNumber
+    } = parsedAddress;
 
-		let request = new WorkRequest({
-			price,
-			details,
-			address,
-			type,
-			date,
-			isRecurrent,
-			isHome,
-			hasDriveway,
-			hasSidewalk,
-			addressStreet,
-			addressCity,
-			addressState,
-			addressZip,
-			isNoAuth: true
-		});
+    let request = new WorkRequest({
+      price,
+      details,
+      address,
+      type,
+      date,
+      isRecurrent,
+      isHome,
+      hasDriveway,
+      hasSidewalk,
+      addressStreet,
+      addressCity,
+      addressState,
+      addressZip,
+      isNoAuth: true,
+      phoneNumber
+    });
 
-		request = await request.save();
+    request = await request.save();
 
-		console.log("saved request = ", request);
+    console.log("saved request = ", request);
 
-		res.status(200).json({
-			success: true,
-			request
-		});
-	} catch (error) {
-		console.log(error);
-		res.status(500).json({
-			success: false,
-			message: "An unknown error occured"
-		});
-	}
+    res.status(200).json({
+      success: true,
+      request
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "An unknown error occured"
+    });
+  }
 };
-
 
 /**
  * find and update an request
@@ -127,41 +158,41 @@ const post_add_no_auth_request = async (req, res) => {
  * @param {*} res
  */
 const put_update_request = async (req, res) => {
-	try {
-		const { email, description, date, type, isRecurrent } = req.body;
+  try {
+    const { email, description, date, type, isRecurrent } = req.body;
 
-		const number = req.params.id;
+    const number = req.params.id;
 
-		let request = await WorkRequest.findOne({
-			number
-		});
+    let request = await WorkRequest.findOne({
+      number
+    });
 
-		if (!request) {
-			res.status(404).json({
-				success: false,
-				message: "We could not find your request"
-			});
-		}
+    if (!request) {
+      res.status(404).json({
+        success: false,
+        message: "We could not find your request"
+      });
+    }
 
-		request.email = email;
-		request.description = description;
-		request.data = date;
-		request.isRecurrent = isRecurrent;
-		request.type = type;
+    request.email = email;
+    request.description = description;
+    request.data = date;
+    request.isRecurrent = isRecurrent;
+    request.type = type;
 
-		request = await request.save();
+    request = await request.save();
 
-		res.status(200).json({
-			success: true,
-			request
-		});
-	} catch (error) {
-		console.log(error);
-		res.status(500).json({
-			success: false,
-			message: "An unknown error occured"
-		});
-	}
+    res.status(200).json({
+      success: true,
+      request
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "An unknown error occured"
+    });
+  }
 };
 
 /**
@@ -170,44 +201,44 @@ const put_update_request = async (req, res) => {
  * @param {*} res
  */
 const get_my_requests = async (req, res) => {
-	try {
-		const requests = await WorkRequest.find({
-			isDeleted: false,
-			user: req.user._id
-		});
-		console.log(requests);
-		res.status(200).json({
-			success: true,
-			requests
-		});
-	} catch (error) {
-		console.log(error);
-		res.status(500).json({
-			success: false,
-			message: "An unknown error occured"
-		});
-	}
+  try {
+    const requests = await WorkRequest.find({
+      isDeleted: false,
+      user: req.user._id
+    });
+    console.log(requests);
+    res.status(200).json({
+      success: true,
+      requests
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "An unknown error occured"
+    });
+  }
 };
 
 const post_requests_pool = async (req, res) => {
-	try {
-		const { zipCode } = req.body;
+  try {
+    const { zipCode } = req.body;
 
-		const requests = await WorkRequest.find({
-			isDeleted: false
-		});
+    const requests = await WorkRequest.find({
+      isDeleted: false
+    });
 
-		res.status(200).json({
-			success: true,
-			requests
-		});
-	} catch (error) {
-		console.log(error);
-		res.status(500).json({
-			success: false,
-			message: "An unknown error occured"
-		});
-	}
+    res.status(200).json({
+      success: true,
+      requests
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "An unknown error occured"
+    });
+  }
 };
 
 /**
@@ -216,41 +247,41 @@ const post_requests_pool = async (req, res) => {
  * @param {*} res
  */
 const post_search_request = async (req, res) => {
-	try {
-		const { email, requestNumber: number } = req.body;
+  try {
+    const { email, requestNumber: number } = req.body;
 
-		let request = await WorkRequest.findOne({
-			number,
-			email
-		});
+    let request = await WorkRequest.findOne({
+      number,
+      email
+    });
 
-		if (!request) {
-			res.status(404).json({
-				success: false,
-				message: "We could not find your request"
-			});
-		}
+    if (!request) {
+      res.status(404).json({
+        success: false,
+        message: "We could not find your request"
+      });
+    }
 
-		res.status(200).json({
-			success: true,
-			request
-		});
-	} catch (error) {
-		console.log(error);
-		res.status(500).json({
-			success: false,
-			message: "An unknown error occured"
-		});
-	}
+    res.status(200).json({
+      success: true,
+      request
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "An unknown error occured"
+    });
+  }
 };
 
-module.exports = (app) => {
-	app.post("/api/v1/requests/pool", post_requests_pool);
-	app.get("/api/v1/requests", authenticate, get_my_requests);
-	app.post("/api/v1/requests", authenticate, post_add_request);
-	app.put("/api/v1/requests/:id", authenticate, put_update_request);
-	app.post("/api/v1/requests/search", authenticate, post_search_request);
+module.exports = app => {
+  app.post("/api/v1/requests/pool", post_requests_pool);
+  app.get("/api/v1/requests", authenticate, get_my_requests);
+  app.post("/api/v1/requests", authenticate, post_add_request);
+  app.put("/api/v1/requests/:id", authenticate, put_update_request);
+  app.post("/api/v1/requests/search", authenticate, post_search_request);
 
-	// no auth required enpoints
-	app.post("/api/v1/common/requests",  post_add_no_auth_request);
+  // no auth required enpoints
+  app.post("/api/v1/common/requests", post_add_no_auth_request);
 };
