@@ -115,6 +115,26 @@ const UserSchema = new Schema({
 	rating: Number
 });
 
+const selectedField = [
+	"_id",
+	"email",
+	"name",
+	"phoneNumber",
+	"isPublic",
+	"isVerified",
+	"isActivated",
+	"isClosed",
+	"isProvider",
+	"street",
+	"city",
+	"state",
+	"zipCode",
+	"description",
+	"nickname",
+	"imageUrl",
+	"rating"
+];
+
 UserSchema.plugin(timestamps);
 
 UserSchema.pre("save", function(next) {
@@ -139,71 +159,31 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb) {
 UserSchema.methods.toJSON = function() {
 	const userObject = this.toObject();
 
-	return pick(userObject, [
-		"_id",
-		"email",
-		"firstname",
-		"middlename",
-		"lastname",
-		"phoneNumber",
-		"isAdmin",
-		"isVerified",
-		"isActivated",
-		"isClosed"
-	]);
+	return pick(userObject, selectedField);
 };
 
 UserSchema.methods.toFullProfile = function() {
 	const userObject = this.toObject();
 
-	return pick(userObject, [
-		"_id",
-		"email",
-		"firstname",
-		"lastname",
-		"phoneNumber",
-		"isAdmin",
-		"isVerified",
-		"isBlocked",
-		"isClosed"
-	]);
+	return pick(userObject, selectedField);
 };
 
 UserSchema.methods.toAuthProfile = function() {
 	const userObject = this.toObject();
 
-	return pick(userObject, [
-		"_id",
-		"email",
-		"firstname",
-		"lastname",
-		"phoneNumber",
-		"isAdmin",
-		"isVerified",
-		"isBlocked",
-		"isClosed"
-	]);
+	return pick(userObject, selectedField);
 };
 
 UserSchema.methods.toPublicProfile = function() {
 	const userObject = this.toObject();
 
-	return pick(userObject, [ "firstname", "lastname" ]);
+	return pick(userObject, selectedField);
 };
 
 UserSchema.methods.toMyProfile = function() {
 	const userObject = this.toObject();
 
-	return pick(userObject, [
-		"email",
-		"firstname",
-		"lastname",
-		"phoneNumber",
-		"isAdmin",
-		"isVerified",
-		"isBlocked",
-		"isClosed"
-	]);
+	return pick(userObject, selectedField);
 };
 
 UserSchema.methods.updatePassword = function(newPassword) {
