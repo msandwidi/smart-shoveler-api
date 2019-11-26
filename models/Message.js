@@ -62,4 +62,19 @@ MessageSchema.statics.findMyMessages = function(user) {
   });
 };
 
+MessageSchema.statics.findMyOneMessage = function(userId, messageId) {
+  return this.findOne({
+    _id: messageId,
+    $or: [
+      {
+        senderId: userId
+      },
+      {
+        recipientId: userId
+      }
+    ],
+    isDeleted: false
+  });
+};
+
 module.exports = mongoose.model("Message", MessageSchema);
