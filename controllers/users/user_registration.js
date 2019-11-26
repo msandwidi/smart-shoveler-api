@@ -35,7 +35,7 @@ const post_signup = async (req, res) => {
 				token,
 				type: emailTypes.CONFIRM_SIGNUP
 			};
-			if (token) emailService.sendEmail(emailBody);
+			//if (token) emailService.sendEmail(emailBody);
 		}
 
 		return res.status(200).json({

@@ -20,7 +20,7 @@ const utils = require("../../utils");
 module.exports.sendEmail = async data => {
   try {
     const { type, email } = data;
-    if (utils.isEmailAddress(email)) {
+    if (email) {
       switch (type) {
         case templateTypes.CONFIRM_SIGNUP:
           sendSignupConfirmation(data);
