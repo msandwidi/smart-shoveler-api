@@ -89,11 +89,9 @@ const post_verify_reset_code = async (req, res) => {
  */
 const put_new_password = async (req, res) => {
 	try {
-		const password = req.body.password;
+		const {password, token} = req.body;
 
-		const resetToken = req.token;
-
-		const user = await User.findByToken("new_pwd", resetToken);
+		const user = await User.findByToken("new_pwd", token);
 
 		if (!user) {
 			return res.status(403).json({
