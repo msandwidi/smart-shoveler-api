@@ -9,492 +9,502 @@ const utils = require("../utils");
 const config = require("../config");
 
 const UserSchema = new Schema({
-	name: {
-		type: String,
-		trim: true
-	},
+  name: {
+    type: String,
+    trim: true,
+    required: true
+  },
 
-	nickname: {
-		type: String,
-		trim: true
-	},
+  nickname: {
+    type: String,
+    trim: true
+  },
 
-	description: {
-		type: String,
-		trim: true
-	},
+  description: {
+    type: String,
+    trim: true
+  },
 
-	email: {
-		type: String,
-		trim: true,
-		unique: true,
-		required: true
-	},
+  email: {
+    type: String,
+    trim: true,
+    unique: true,
+    required: true
+  },
 
-	password: {
-		type: String,
-		trim: true,
-		required: true
-	},
+  password: {
+    type: String,
+    trim: true,
+    required: true
+  },
 
-	address: {
-		type: String,
-		trim: true
-	},
+  address: {
+    type: String,
+    trim: true
+  },
 
-	street: {
-		type: String,
-		trim: true
-	},
+  latitude: {
+    type: Number
+  },
 
-	city: {
-		type: String,
-		trim: true
-	},
+  longitude: {
+    type: String
+  },
 
-	zipCode: {
-		type: Number
-	},
+  street: {
+    type: String,
+    trim: true
+  },
 
-	state: {
-		type: String,
-		trim: true
-	},
+  city: {
+    type: String,
+    trim: true
+  },
 
-	imageUrl: {
-		type: String,
-		trim: true,
-		default: "https://res.cloudinary.com/smimages/image/upload/c_scale,h_40/v1574617110/defaultprofile_md.png"
-	},
+  zipCode: {
+    type: Number
+  },
 
-	phoneNumber: Number,
+  state: {
+    type: String,
+    trim: true
+  },
 
-	isAdmin: {
-		type: Boolean,
-		default: false
-	},
+  imageUrl: {
+    type: String,
+    trim: true,
+    default:
+      "https://res.cloudinary.com/smimages/image/upload/c_scale,h_40/v1574617110/defaultprofile_md.png"
+  },
 
-	tokens: [
-		{
-			access: String,
-			token: String,
-			expiration: Date
-		}
-	],
+  phoneNumber: Number,
 
-	isBlocked: {
-		type: Boolean,
-		default: false
-	}, // is locked by user or user's action
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
 
-	isVerified: {
-		type: Boolean,
-		default: false
-	}, // is verified after sign up
+  tokens: [
+    {
+      access: String,
+      token: String,
+      expiration: Date
+    }
+  ],
 
-	isClosed: {
-		type: Boolean,
-		default: false
-	}, // is suspended by admin
+  isBlocked: {
+    type: Boolean,
+    default: false
+  }, // is locked by user or user's action
 
-	forcePwdReset: {
-		type: Boolean,
-		default: false
-	},
+  isVerified: {
+    type: Boolean,
+    default: false
+  }, // is verified after sign up
 
-	isProvider: {
-		type: Boolean,
-		default: false
-	},
+  isClosed: {
+    type: Boolean,
+    default: false
+  }, // is suspended by admin
 
-	isPublic: {
-		type: Boolean,
-		default: false
-	},
+  forcePwdReset: {
+    type: Boolean,
+    default: false
+  },
 
-	rating: Number
+  isProvider: {
+    type: Boolean,
+    default: false
+  },
+
+  isPublic: {
+    type: Boolean,
+    default: false
+  },
+
+  rating: Number
 });
 
 const selectedField = [
-	"_id",
-	"email",
-	"name",
-	"phoneNumber",
-	"isPublic",
-	"isVerified",
-	"isActivated",
-	"isClosed",
-	"isProvider",
-	"street",
-	"city",
-	"state",
-	"zipCode",
-	"description",
-	"nickname",
-	"imageUrl",
-	"rating"
+  "_id",
+  "email",
+  "name",
+  "phoneNumber",
+  "isPublic",
+  "isVerified",
+  "isActivated",
+  "isClosed",
+  "isProvider",
+  "street",
+  "city",
+  "state",
+  "zipCode",
+  "description",
+  "nickname",
+  "imageUrl",
+  "rating"
 ];
 
 UserSchema.plugin(timestamps);
 
 UserSchema.pre("save", function(next) {
-	let user = this;
+  let user = this;
 
-	if (!user.isModified("password")) return next();
+  if (!user.isModified("password")) return next();
 
-	bcrypt.genSalt(10, function(err, salt) {
-		if (err) return next(err);
-		bcrypt.hash(user.password, salt, function(err, hash) {
-			if (err) return next(err);
-			user.password = hash;
-			return next();
-		});
-	});
+  bcrypt.genSalt(10, function(err, salt) {
+    if (err) return next(err);
+    bcrypt.hash(user.password, salt, function(err, hash) {
+      if (err) return next(err);
+      user.password = hash;
+      return next();
+    });
+  });
 });
 
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-	bcrypt.compare(candidatePassword, this.password, cb);
+  bcrypt.compare(candidatePassword, this.password, cb);
 };
 
 UserSchema.methods.toJSON = function() {
-	const userObject = this.toObject();
+  const userObject = this.toObject();
 
-	return pick(userObject, selectedField);
+  return pick(userObject, selectedField);
 };
 
 UserSchema.methods.toFullProfile = function() {
-	const userObject = this.toObject();
+  const userObject = this.toObject();
 
-	return pick(userObject, selectedField);
+  return pick(userObject, selectedField);
 };
 
 UserSchema.methods.toAuthProfile = function() {
-	const userObject = this.toObject();
+  const userObject = this.toObject();
 
-	return pick(userObject, selectedField);
+  return pick(userObject, selectedField);
 };
 
 UserSchema.methods.toPublicProfile = function() {
-	const userObject = this.toObject();
+  const userObject = this.toObject();
 
-	return pick(userObject, selectedField);
+  return pick(userObject, selectedField);
 };
 
 UserSchema.methods.toMyProfile = function() {
-	const userObject = this.toObject();
+  const userObject = this.toObject();
 
-	return pick(userObject, selectedField);
+  return pick(userObject, selectedField);
 };
 
 UserSchema.methods.updatePassword = function(newPassword) {
-	let user = this;
-	user.password = newPassword;
-	user.isBlocked = false;
-	user.tokens = [];
-	return user.save();
+  let user = this;
+  user.password = newPassword;
+  user.isBlocked = false;
+  user.tokens = [];
+  return user.save();
 };
 
 UserSchema.methods.updateProfile = function(data) {
-	let user = this;
-	user.firstname = data.firstname;
-	user.lastname = data.lastname;
-	user.email = data.email;
-	user.phoneNumber = data.phoneNumber;
-	return user.save();
+  let user = this;
+  user.firstname = data.firstname;
+  user.lastname = data.lastname;
+  user.email = data.email;
+  user.phoneNumber = data.phoneNumber;
+  return user.save();
 };
 
 UserSchema.methods.activateAccount = function() {
-	let user = this;
+  let user = this;
 
-	user.isVerified = true;
-	user.isClosed = false;
-	user.isBlocked = false;
-	user.tokens = [];
-	return user.save();
+  user.isVerified = true;
+  user.isClosed = false;
+  user.isBlocked = false;
+  user.tokens = [];
+  return user.save();
 };
 
 UserSchema.methods.resetPassword = function(password) {
-	let user = this;
+  let user = this;
 
-	user.isVerified = true;
-	user.isBlocked = false;
-	user.isClosed = false;
-	user.tokens = [];
-	user.password = password;
-	return user.save();
+  user.isVerified = true;
+  user.isBlocked = false;
+  user.isClosed = false;
+  user.tokens = [];
+  user.password = password;
+  return user.save();
 };
 
 UserSchema.methods.closeAccount = function() {
-	let user = this;
+  let user = this;
 
-	user.isClosed = true;
-	user.tokens = [];
-	user.password = utils.generateRandomToken(null, 24);
-	return user.save();
+  user.isClosed = true;
+  user.tokens = [];
+  user.password = utils.generateRandomToken(null, 24);
+  return user.save();
 };
 
 UserSchema.methods.reopenAccount = function() {
-	let user = this;
+  let user = this;
 
-	user.isVerified = true;
-	user.isBlocked = true;
-	user.isClosed = false;
-	user.tokens = [];
-	user.password = utils.generateRandomToken(null, 24);
-	return user.save();
+  user.isVerified = true;
+  user.isBlocked = true;
+  user.isClosed = false;
+  user.tokens = [];
+  user.password = utils.generateRandomToken(null, 24);
+  return user.save();
 };
 
 UserSchema.methods.setToAdmin = function() {
-	let user = this;
+  let user = this;
 
-	user.isAdmin = true;
-	user.isVerified = true;
-	user.isBlocked = true;
-	user.isClosed = false;
-	user.tokens = [];
-	return user.save();
+  user.isAdmin = true;
+  user.isVerified = true;
+  user.isBlocked = true;
+  user.isClosed = false;
+  user.tokens = [];
+  return user.save();
 };
 
 UserSchema.methods.revokeAdmin = function() {
-	let user = this;
+  let user = this;
 
-	user.isAdmin = false;
-	user.isVerified = true;
-	user.isBlocked = true;
-	user.isClosed = false;
-	user.tokens = [];
-	return user.save();
+  user.isAdmin = false;
+  user.isVerified = true;
+  user.isBlocked = true;
+  user.isClosed = false;
+  user.tokens = [];
+  return user.save();
 };
 
 UserSchema.methods.blockAccount = function() {
-	let user = this;
+  let user = this;
 
-	user.isBlocked = true;
-	user.isClosed = false;
-	user.tokens = [];
-	return user.save();
+  user.isBlocked = true;
+  user.isClosed = false;
+  user.tokens = [];
+  return user.save();
 };
 
 UserSchema.methods.generateToken = function(access) {
-	let user = this;
+  let user = this;
 
-	switch (access) {
-		case "auth":
-			const authToken = jwt
-				.sign(
-					{
-						_id: user._id.toHexString(),
-						access
-					},
-					config.JWT_SECRET_KEY,
-					{
-						expiresIn: 60 * 60 * 12 // 12h max
-					}
-				)
-				.toString();
+  switch (access) {
+    case "auth":
+      const authToken = jwt
+        .sign(
+          {
+            _id: user._id.toHexString(),
+            access
+          },
+          config.JWT_SECRET_KEY,
+          {
+            expiresIn: 60 * 60 * 12 // 12h max
+          }
+        )
+        .toString();
 
-			if (user.tokens && user.tokens.length >= 5) {
-				const tokensSize = user.tokens.length;
-				// no more than 5 devices
-				user.tokens = user.tokens.slice(tokensSize - 4);
-			}
+      if (user.tokens && user.tokens.length >= 5) {
+        const tokensSize = user.tokens.length;
+        // no more than 5 devices
+        user.tokens = user.tokens.slice(tokensSize - 4);
+      }
 
-			user.tokens = user.tokens.concat([
-				{
-					access,
-					token: authToken,
-					expiration: Date.now() + 1000 * 60 * 60 * 8 //8h
-				}
-			]);
+      user.tokens = user.tokens.concat([
+        {
+          access,
+          token: authToken,
+          expiration: Date.now() + 1000 * 60 * 60 * 8 //8h
+        }
+      ]);
 
-			return user
-				.save()
-				.then((user) => {
-					if (!user) return Promise.resolve();
-					return new Promise((resolve) => resolve(authToken));
-				})
-				.catch((e) => {
-					console.log(e);
-					return Promise.resolve();
-				});
+      return user
+        .save()
+        .then(user => {
+          if (!user) return Promise.resolve();
+          return new Promise(resolve => resolve(authToken));
+        })
+        .catch(e => {
+          console.log(e);
+          return Promise.resolve();
+        });
 
-		case "reset":
-			const resetToken = utils.generateRandomToken(null, 32);
-			user.tokens = [];
-			user.tokens = user.tokens.concat([
-				{
-					access,
-					token: resetToken,
-					expiration: Date.now() + 1000 * 60 * 30 // 30mn do not change
-				}
-			]);
-			return user
-				.save()
-				.then((user) => {
-					if (!user) return Promise.resolve();
-					return new Promise((resolve) => resolve(resetToken));
-				})
-				.catch((e) => {
-					console.log(e);
-					return Promise.resolve();
-				});
+    case "reset":
+      const resetToken = utils.generateRandomToken(null, 32);
+      user.tokens = [];
+      user.tokens = user.tokens.concat([
+        {
+          access,
+          token: resetToken,
+          expiration: Date.now() + 1000 * 60 * 30 // 30mn do not change
+        }
+      ]);
+      return user
+        .save()
+        .then(user => {
+          if (!user) return Promise.resolve();
+          return new Promise(resolve => resolve(resetToken));
+        })
+        .catch(e => {
+          console.log(e);
+          return Promise.resolve();
+        });
 
-		case "new_pwd":
-			const newPwdToken = jwt
-				.sign(
-					{
-						_id: user._id.toHexString(),
-						access
-					},
-					config.JWT_SECRET_KEY,
-					{
-						expiresIn: 60 * 5 // 5minutes
-					}
-				)
-				.toString();
+    case "new_pwd":
+      const newPwdToken = jwt
+        .sign(
+          {
+            _id: user._id.toHexString(),
+            access
+          },
+          config.JWT_SECRET_KEY,
+          {
+            expiresIn: 60 * 5 // 5minutes
+          }
+        )
+        .toString();
 
-			user.tokens = [];
-			user.tokens = user.tokens.concat([
-				{
-					access,
-					token: newPwdToken,
-					expiration: Date.now() + 1000 * 60 * 5 //5mn
-				}
-			]);
-			user.isBlocked = true;
+      user.tokens = [];
+      user.tokens = user.tokens.concat([
+        {
+          access,
+          token: newPwdToken,
+          expiration: Date.now() + 1000 * 60 * 5 //5mn
+        }
+      ]);
+      user.isBlocked = true;
 
-			return user
-				.save()
-				.then((user) => {
-					if (!user) return Promise.resolve();
-					return new Promise((resolve) => resolve(newPwdToken));
-				})
-				.catch((e) => {
-					console.log(e);
-					return Promise.resolve();
-				});
-		case "activation":
-			const activationToken = utils.generateRandomToken(null, 32);
-			user.tokens = [];
+      return user
+        .save()
+        .then(user => {
+          if (!user) return Promise.resolve();
+          return new Promise(resolve => resolve(newPwdToken));
+        })
+        .catch(e => {
+          console.log(e);
+          return Promise.resolve();
+        });
+    case "activation":
+      const activationToken = utils.generateRandomToken(null, 32);
+      user.tokens = [];
 
-			user.tokens = user.tokens.concat([
-				{
-					access,
-					token: activationToken,
-					expiration: Date.now() + 1000 * 60 * 30 //30mn do not modify
-				}
-			]);
+      user.tokens = user.tokens.concat([
+        {
+          access,
+          token: activationToken,
+          expiration: Date.now() + 1000 * 60 * 30 //30mn do not modify
+        }
+      ]);
 
-			return user
-				.save()
-				.then((user) => {
-					if (!user) return Promise.resolve();
-					return new Promise((resolve) => resolve(activationToken));
-				})
-				.catch((e) => {
-					console.log(e);
-					return Promise.resolve();
-				});
+      return user
+        .save()
+        .then(user => {
+          if (!user) return Promise.resolve();
+          return new Promise(resolve => resolve(activationToken));
+        })
+        .catch(e => {
+          console.log(e);
+          return Promise.resolve();
+        });
 
-		default:
-			return Promise.resolve();
-	}
+    default:
+      return Promise.resolve();
+  }
 };
 
 UserSchema.statics.findByToken = function(access, token) {
-	const User = this;
+  const User = this;
 
-	let decoded;
-	switch (access) {
-		case "auth":
-			decoded = utils.verifyToken(token);
-			if (!decoded) return Promise.resolve();
+  let decoded;
+  switch (access) {
+    case "auth":
+      decoded = utils.verifyToken(token);
+      if (!decoded) return Promise.resolve();
 
-			return User.findOne({
-				_id: decoded._id,
-				"tokens.token": token,
-				"tokens.access": access,
-				isVerified: true,
-				isBlocked: false,
-				isClosed: false
-			});
+      return User.findOne({
+        _id: decoded._id,
+        "tokens.token": token,
+        "tokens.access": access,
+        isVerified: true,
+        isBlocked: false,
+        isClosed: false
+      });
 
-		case "reset":
-			return User.findOne({
-				"tokens.token": token,
-				"tokens.access": access,
-				isVerified: true,
-				isClosed: false
-			});
+    case "reset":
+      return User.findOne({
+        "tokens.token": token,
+        "tokens.access": access,
+        isVerified: true,
+        isClosed: false
+      });
 
-		case "activation":
-			return User.findOne({
-				"tokens.token": token,
-				"tokens.access": access,
-				isClosed: false,
-				isVerified: false
-			});
+    case "activation":
+      return User.findOne({
+        "tokens.token": token,
+        "tokens.access": access,
+        isClosed: false,
+        isVerified: false
+      });
 
-		case "new_pwd":
-			decoded = utils.verifyToken(token);
-			if (!decoded) return Promise.resolve();
+    case "new_pwd":
+      decoded = utils.verifyToken(token);
+      if (!decoded) return Promise.resolve();
 
-			return User.findOne({
-				_id: decoded._id,
-				"tokens.token": token,
-				"tokens.access": access,
-				isVerified: true,
-				isBlocked: true,
-				isClosed: false
-			});
+      return User.findOne({
+        _id: decoded._id,
+        "tokens.token": token,
+        "tokens.access": access,
+        isVerified: true,
+        isBlocked: true,
+        isClosed: false
+      });
 
-		default:
-			return Promise.resolve();
-	}
+    default:
+      return Promise.resolve();
+  }
 };
 
 UserSchema.methods.removeToken = function(token) {
-	var user = this;
+  var user = this;
 
-	return user.updateOne({
-		$pull: {
-			tokens: {
-				token
-			}
-		}
-	});
+  return user.updateOne({
+    $pull: {
+      tokens: {
+        token
+      }
+    }
+  });
 };
 
 UserSchema.methods.clearAccessToken = function() {
-	var user = this;
+  var user = this;
 
-	user.tokens = [];
-	return user.save();
+  user.tokens = [];
+  return user.save();
 };
 
 UserSchema.statics.findByCredentials = function(email, password) {
-	const User = this;
+  const User = this;
 
-	return User.findOne({
-		email,
-		isClosed: false
-	}).then((user) => {
-		if (!user) {
-			return Promise.resolve();
-		}
+  return User.findOne({
+    email,
+    isClosed: false
+  }).then(user => {
+    if (!user) {
+      return Promise.resolve();
+    }
 
-		return new Promise((resolve) => {
-			bcrypt.compare(password, user.password, (err, isMatch) => {
-				if (err || !isMatch) return resolve();
-				return resolve(user);
-			});
-		});
-	});
+    return new Promise(resolve => {
+      bcrypt.compare(password, user.password, (err, isMatch) => {
+        if (err || !isMatch) return resolve();
+        return resolve(user);
+      });
+    });
+  });
 };
 
 UserSchema.statics.fetchAccounts = function() {
-	const Accounts = this;
-	return Accounts.find().select("-password -oldPasswords -tokens -_v");
+  const Accounts = this;
+  return Accounts.find().select("-password -oldPasswords -tokens -_v");
 };
 
 module.exports = mongoose.model("User", UserSchema);

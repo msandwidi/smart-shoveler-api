@@ -1,6 +1,8 @@
 const User = require("../../models/User");
 
 //middlewares
+const validations = require("../../validations/");
+const checkValidationErrors = require("../../middlewares/check_validation_errors");
 
 const emailService = require("../../services/email");
 const emailTypes = require("../../services/email/emailTypes");
@@ -11,45 +13,44 @@ const emailTypes = require("../../services/email/emailTypes");
  * @param {*} res
  */
 const post_signup = async (req, res) => {
-	try {
-		const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-		const existingUser = await User.findOne({
-			email
-		});
+    const existingUser = await User.findOne({
+      email
+    });
 
-		if (!existingUser) {
-			const newUser = new User({
-				name,
-				email,
-				password,
-				isVerified: true
-			});
+    if (!existingUser) {
+      const newUser = new User({
+        name,
+        email,
+        password,
+        isVerified: true
+      });
 
-			const token = await newUser.generateToken("activation");
+      const token = await newUser.generateToken("activation");
 
-			const emailBody = {
-				_id: newUser._id,
-				email,
-				name,
-				token,
-				type: emailTypes.CONFIRM_SIGNUP
-			};
-			//if (token) emailService.sendEmail(emailBody);
-		}
+      const emailBody = {
+        _id: newUser._id,
+        email,
+        name,
+        token,
+        type: emailTypes.CONFIRM_SIGNUP
+      };
+      //if (token) emailService.sendEmail(emailBody);
+    }
 
-		return res.status(200).json({
-			success: true,
-			message:
-				"A confirmation email was sent to you"
-		});
-	} catch (error) {
+    return res.status(200).json({
+      success: true,
+      message: "A confirmation email was sent to you"
+    });
+  } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
       message: "An error occured while processing your request"
     });
-	}
+  }
 };
 
 /**
@@ -58,46 +59,53 @@ const post_signup = async (req, res) => {
  * @param {*} res
  */
 const get_activate_account = async (req, res) => {
-	try {
-		const id = req.params.id;
+  try {
+    const id = req.params.id;
 
-		const user = await User.findByToken("activation", id);
+    const user = await User.findByToken("activation", id);
 
-		if (!user) {
-			return res.status(400).json({
-				success: false,
-				message: "This link seems to be expired"
-			});
-		}
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "This link seems to be expired"
+      });
+    }
 
-		user.activateAccount();
+    user.activateAccount();
 
-		const emailBody = {
-			_id: user._id,
-			name: user.name,
-			email: user.email,
-			type: emailTypes.CONFIRM_ACTIVATION
-		};
+    const emailBody = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      type: emailTypes.CONFIRM_ACTIVATION
+    };
 
-		emailService.sendEmail(emailBody);
+    emailService.sendEmail(emailBody);
 
-		return res.status(200).json({
-			success: true,
-			message: "Your account is activiated"
-		});
-	} catch (error) {
+    return res.status(200).json({
+      success: true,
+      message: "Your account is activiated"
+    });
+  } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
       message: "An error occured while processing your request"
     });
-	}
+  }
 };
 
-module.exports = (app) => {
-	app.post(`/api/v1/users/account/signup`,   post_signup);
-	app.get(
-		`/api/v1/users/account/signup/activate/:id`,
-		get_activate_account
-	);
+module.exports = app => {
+  app.post(
+    `/api/v1/users/account/signup`,
+    validations.USER_SIGNUP,
+    checkValidationErrors,
+    post_signup
+  );
+  app.get(
+    `/api/v1/users/account/signup/activate/:id`,
+    validations.USER_ACTIVATE_ACCOUNT,
+    checkValidationErrors,
+    get_activate_account
+  );
 };
