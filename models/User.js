@@ -296,10 +296,7 @@ UserSchema.methods.generateToken = function(access) {
             _id: user._id.toHexString(),
             access
           },
-          config.JWT_SECRET_KEY,
-          {
-            expiresIn: 60 * 60 * 12 // 12h max
-          }
+          config.JWT_SECRET_KEY 
         )
         .toString();
 
