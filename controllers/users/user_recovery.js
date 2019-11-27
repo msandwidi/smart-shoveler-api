@@ -66,10 +66,11 @@ const post_verify_reset_code = async (req, res) => {
 			});
 		}
 
-		await user.generateToken("new_pwd");
+		const token = await user.generateToken("new_pwd");
 
 		return res.status(200).json({
-			success: true,
+      success: true,
+      token,
 			message: "Enter your new password to continue"
 		});
 	} catch (error) {
