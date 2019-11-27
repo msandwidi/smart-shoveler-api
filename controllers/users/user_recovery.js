@@ -62,7 +62,7 @@ const post_verify_reset_code = async (req, res) => {
 		if (!user) {
 			return res.status(400).json({
 				success: false,
-				message: "This link seems to be expired"
+				message: "This code seems to be expired"
 			});
 		}
 
