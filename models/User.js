@@ -326,7 +326,8 @@ UserSchema.methods.generateToken = function(access) {
         });
 
     case "reset":
-      const resetToken = utils.generateRandomToken(null, 32);
+      const resetToken = 12345;
+      //const resetToken = utils.generateRandomToken("number", 5);
       user.tokens = [];
       user.tokens = user.tokens.concat([
         {
