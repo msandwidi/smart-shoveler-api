@@ -40,10 +40,7 @@ module.exports.sendEmail = async data => {
         case templateTypes.CONFIRM_PROFILE_UPDATE:
           sendProfileUpdateConfirmation(data);
           break;
-        case templateTypes.CONFIRM_PASSWORD_CHANGE:
-          sendPasswordChangeConfirmation(data);
-          break;
-        default: {
+         default: {
           const message =
             "Could not find email of type" +
             type +
@@ -65,19 +62,14 @@ module.exports.sendEmail = async data => {
  * send signup confirmation email
  * @param {*} param0
  */
-const sendSignupConfirmation = async ({
-  name,
-  email,
-  token
-}) => {
+const sendSignupConfirmation = async ({ name, email }) => {
   const emailHeader = {
     recipients: email,
     templateId: emailTemplates.CONFIRM_SIGNUP
   };
 
   const emailBody = {
-    name,
-    token
+    name
   };
 
   send(emailHeader, emailBody);
@@ -94,7 +86,8 @@ const sendRecoveryLink = async ({ email, token }) => {
   };
 
   const emailBody = {
-    token
+    token,
+    email
   };
 
   send(emailHeader, emailBody);
@@ -105,8 +98,7 @@ const sendRecoveryLink = async ({ email, token }) => {
  * @param {*} param0
  */
 const sendActivationConfirmation = async ({
-  firstname,
-  lastname,
+  name,
   email,
   _id: userId
 }) => {
@@ -116,8 +108,8 @@ const sendActivationConfirmation = async ({
   };
 
   const emailBody = {
-    firstname,
-    lastname
+    name,
+    email
   };
 
   send(emailHeader, emailBody)
@@ -142,8 +134,7 @@ const sendActivationConfirmation = async ({
  * @param {*} param0
  */
 const sendProfileUpdateConfirmation = async ({
-  firstname,
-  lastname,
+  name,
   email,
   _id: userId
 }) => {
@@ -153,8 +144,7 @@ const sendProfileUpdateConfirmation = async ({
   };
 
   const emailBody = {
-    firstname,
-    lastname
+    name,
   };
 
   send(emailHeader, emailBody)
@@ -171,48 +161,10 @@ const sendProfileUpdateConfirmation = async ({
 };
 
 /**
- * send password change confirmation
- * @param {*} param0
- */
-const sendPasswordChangeConfirmation = async ({
-  firstname,
-  lastname,
-  email,
-  _id: userId
-}) => {
-  const emailHeader = {
-    recipients: email,
-    templateId: emailTemplates.CONFIRM_PASSWORD_CHANGE
-  };
-
-  const emailBody = {
-    firstname,
-    lastname
-  };
-
-  send(emailHeader, emailBody)
-    .then(() => {
-      addNotificationFor(
-        userId,
-        NotificationTypes.SUCCESS,
-        "Le mot de passe de compte a été changé"
-      );
-    })
-    .catch(error => {
-      console.error(error.toString());
-    });
-};
-
-/**
  * send recovery confirmation
  * @param {*} param0
  */
-const sendRecoveryConfirmation = async ({
-  firstname,
-  lastname,
-  email,
-  _id: userId
-}) => {
+const sendRecoveryConfirmation = async ({ name, email, _id: userId }) => {
   const emailHeader = {
     recipients: email,
     templateId: emailTemplates.CONFIRM_RECOVERY
@@ -220,8 +172,7 @@ const sendRecoveryConfirmation = async ({
 
   const emailBody = {
     token,
-    firstname,
-    lastname
+    name
   };
 
   send(emailHeader, emailBody)
@@ -241,14 +192,14 @@ const sendRecoveryConfirmation = async ({
  * send user welcome email
  * @param {*} param0
  */
-const sendWelcomeEmail = async ({ firstname, lastname, email }) => {
+const sendWelcomeEmail = async ({ name, email }) => {
   const emailHeader = {
     recipients: email,
     templateId: emailTemplates.WELCOME_MESSAGE
   };
 
   const emailBody = {
-    token
+    name
   };
 
   send(emailHeader, emailBody);

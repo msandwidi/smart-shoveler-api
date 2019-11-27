@@ -296,7 +296,10 @@ UserSchema.methods.generateToken = function(access) {
             _id: user._id.toHexString(),
             access
           },
-          config.JWT_SECRET_KEY 
+          config.JWT_SECRET_KEY,
+          {
+            expiresIn: 60 * 60 * 12 // 12h max
+          }
         )
         .toString();
 
@@ -326,8 +329,7 @@ UserSchema.methods.generateToken = function(access) {
         });
 
     case "reset":
-      const resetToken = 12345;
-      //const resetToken = utils.generateRandomToken("number", 5);
+      const resetToken = utils.generateRandomToken(null, 32);
       user.tokens = [];
       user.tokens = user.tokens.concat([
         {
