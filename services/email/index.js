@@ -66,8 +66,7 @@ module.exports.sendEmail = async data => {
  * @param {*} param0
  */
 const sendSignupConfirmation = async ({
-  firstname,
-  lastname,
+  name,
   email,
   token
 }) => {
@@ -77,8 +76,7 @@ const sendSignupConfirmation = async ({
   };
 
   const emailBody = {
-    firstname,
-    lastname,
+    name,
     token
   };
 
